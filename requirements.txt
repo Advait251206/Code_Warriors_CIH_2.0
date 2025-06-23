@@ -1,0 +1,5 @@
+streamlit
+google-generativeai>=0.4.0
+pandas
+requests
+tabulate
