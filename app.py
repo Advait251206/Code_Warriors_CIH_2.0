@@ -1,33 +1,3 @@
-# app.py – Streamlit Real Estate Advisor (Multi-Tool, Multi-Language, FSI-Aware, Printable, Multi-Step, & File-based)
-
-"""
-🏠 AI Real Estate Advisor: Your Guided Project Planner
-
-This is a comprehensive, multi-language version that combines a guided workflow
-with a robust project storage system and advanced analysis tools.
-
-FEATURES (Updated):
-- **15 Advanced Calculators:** Includes Build vs. Buy, Hyper-Local Price & Rent Analysis,
-  Detailed Cost Breakdown, Material Prices, Payback Calculator, Resale Predictor,
-  Green Cost & Savings Estimators, Location Quality Score, Comparative Locality Analysis,
-  and NEW Flood/Eco-Zone Alert, Vendor Suggestions, & a Loan/Subsidy Guide.
-- **Stateful Tool Navigation:** Seamlessly switch between the main report and advanced tools.
-- **Multi-Language Support:** UI and AI responses in English, Hindi, and Marathi.
-- **FSI & Investment Workflows:** Specialized forms for FSI calculations and co-ownership.
-- **Printable Reports:** A "Print" button to save the generated AI strategy as a PDF.
-- **Individual Project Files:** Each project is saved as a unique CSV in a 'projects' directory.
-- **Enhanced Sidebar:** A dynamic sidebar for full project management.
-
-▶ Run:
-    streamlit run app.py
-
-📦 Requirements (add to requirements.txt):
-    streamlit
-    google-generativeai>=0.4.0
-    pandas
-    numpy
-"""
-
 import os
 import random
 import textwrap
@@ -37,7 +7,6 @@ import numpy as np
 import streamlit as st
 from datetime import date, timedelta
 
-# --- Directory for storing individual project files ---
 PROJECTS_DIR = "projects"
 os.makedirs(PROJECTS_DIR, exist_ok=True)
 
@@ -47,12 +16,7 @@ except ImportError:
     st.error("Gemini API library not found. Please run 'pip install google-generativeai' in your environment.")
     st.stop()
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Gemini Setup & Translation
-# ─────────────────────────────────────────────────────────────────────────────
-# WARNING: For production, use Streamlit Secrets (st.secrets). Hardcoding keys is insecure.
 GEMINI_API_KEYS = [
-    # Add your Gemini API keys here
     "AIzaSyAejvlhIRTaB3-36e-1kXkSn-EaoQasIlA", "AIzaSyDNHN7T5apK6VckmgQJ3AY_5oCgXkwtyuc",
 ]
 valid_api_keys = [key for key in GEMINI_API_KEYS if "YOUR_API_KEY" not in key]
@@ -65,10 +29,8 @@ selected_key = random.choice(valid_api_keys)
 genai.configure(api_key=selected_key)
 MODEL = genai.GenerativeModel("gemini-1.5-flash")
 
-# --- Translation Dictionary (Heavily Expanded for New Features) ---
 TRANSLATIONS = {
     'en': {
-        # --- Core App ---
         "language_name": "English", "app_title": "AI Real Estate Advisor", "project_manager_title": "Project Manager",
         "active_project_caption": "Active Project", "switch_project_button": "🔄 Switch Project", "danger_zone_header": "🚨 Danger Zone",
         "delete_confirm_checkbox": "Confirm deletion", "delete_project_button": "❌ Delete Project Permanently", "project_deleted_success": "Project '{project_name}' has been deleted.",
@@ -108,20 +70,14 @@ TRANSLATIONS = {
         "advanced_tools_header": "🛠️ Advanced Analysis Tools", "back_to_analysis_button": "⬅️ Back to Main Analysis", "back_button_text": "⬅️ Back",
         "api_error_message": "⚠️ An error occurred with the AI service: {err}",
         "analysis_projections_header": "Analysis & Projections", "cost_construction_header": "Cost & Construction", "financial_green_header": "Financial & Green",
-
-        # --- Tool: Build vs. Buy ---
         "tool_build_vs_buy_button": "Build vs. Buy", "tool_build_vs_buy_title": "Build vs. Buy: Unit Economics", "tool_build_vs_buy_info": "This tool compares the total project cost of building a multi-unit property versus the cost of buying a single ready-made flat, breaking it down to a per-unit cost.", "build_cost_header": "Total Project Cost (to Build)", "buy_cost_header": "Cost to Buy (Single Flat)", "land_cost": "Land Cost", "construction_cost": "Total Construction Cost", "other_costs": "Other Costs (10%)", "total_build_cost": "Total Project Cost", "property_price": "Ready-Made Flat Price", "breakeven_analysis_header": "Per-Unit Breakeven Analysis", "num_flats_to_build_label": "Number of Flats to Build", "cost_per_flat_build_label": "Cost Per Flat (If You Build)", "price_ready_flat_label": "Price of Ready-Made Flat", "build_vs_buy_conclusion": "Your total project cost of **₹{total_build_cost:,.0f}** is high due to land value. However, by building **{num_flats} units**, your effective cost per flat is **₹{cost_per_flat:,.0f}**, which is **{comparison}** than buying a single ready-made flat for **₹{buy_price:,.0f}**.",
         "tool_locality_compare_button": "Hyper-Local Prices", "tool_locality_compare_title": "Hyper-Local Price Analyzer", "tool_locality_compare_info": "This tool shows how property prices can vary within the same locality based on proximity to the main road.", "locality_price_table_header": "Price Variation in {locality}",
         "tool_sqft_breakdown_button": "Detailed Costs", "tool_sqft_breakdown_title": "Detailed Construction Cost Breakdown", "tool_sqft_breakdown_info": "This provides a detailed breakdown of construction costs, showing each item's price based on your budget and its percentage of the total.", "house_construction_tab": "House Construction Costs", "flat_interiors_tab": "Flat Finishing Costs", "cost_item_label": "Item", "cost_sqft_label": "Cost per sq.ft. (₹)", "cost_as_percent_label": "% of Total", "cost_price_label": "Price (₹)",
         "tool_contract_diff_button": "Material Prices", "tool_contract_diff_title": "Material Price Analyzer", "tool_contract_diff_info": "This tool shows estimated prices for key construction materials across different commercial zones in your city.", "material_prices_header": "Estimated Material Prices in {city}",
-
-        # --- NEW & ENHANCED TOOLS ---
         "tool_resale_predictor_button": "Resale Predictor", "tool_resale_predictor_title": "Resale Value Predictor", "tool_resale_predictor_info": "This tool projects the future resale value of your property based on a simulated annual growth rate.", "resale_projection_header": "{years}-Year Resale Projection for a {size} sq.ft. Property", "current_value_label": "Current Estimated Value", "projected_value_label": "Projected Value", "annual_growth_rate_label": "Simulated Annual Growth Rate", "property_size_label": "Property Size (sq.ft)",
         "tool_rent_forecaster_button": "Rent Forecaster", "tool_rent_forecaster_title": "Hyper-Local Rental Income Forecaster", "tool_rent_forecaster_info": "Estimate potential monthly rent based on both rental type (Residential, Retail, Office) and the property's specific location within the neighborhood.", "forecast_monthly_rent_label": "Forecasted Monthly Rent (₹)", "location_label": "Location",
         "tool_payback_calculator_button": "Payback Calculator", "tool_payback_calculator_title": "Hyper-Local Investment Payback Calculator", "tool_payback_calculator_info": "Calculates the payback period (in years) based on rental type and location, factoring in different maintenance & expense ratios for each.", "payback_period_label": "Payback Period (Years)",
         "rent_type_residential": "Residential", "rent_type_commercial_retail": "Commercial (Retail)", "rent_type_commercial_office": "Commercial (Office)",
-
-        # --- GREEN & ECO TOOLS ---
         "green_eco_costing_header": "♻️ Green + Eco Costing",
         "tool_green_cost_estimator_button": "Green Cost Estimator", "tool_green_cost_estimator_title": "Green Feature Cost Estimator", "tool_green_cost_estimator_info": "Estimate the initial installation cost for popular eco-friendly features like solar panels, rainwater harvesting, and insulation.",
         "green_feature_label": "Green Feature", "estimated_cost_label": "Estimated Cost (₹)", "notes_label": "Notes / Assumptions",
@@ -129,16 +85,12 @@ TRANSLATIONS = {
         "solar_note": "Based on a 5kW system for a standard house.", "rainwater_note": "For a 10,000-liter underground tank.", "insulation_note": "Based on roof area (approx. 60% of built-up area).",
         "tool_green_savings_predictor_button": "Green Savings Predictor", "tool_green_savings_predictor_title": "Eco-Savings & Payback Predictor", "tool_green_savings_predictor_info": "This tool forecasts your long-term financial savings on utility bills (electricity, water) from green investments and calculates the simple payback period.",
         "annual_savings_label": "Est. Annual Savings (₹)", "payback_period_years_label": "Payback Period (Years)",
-
-        # --- LOCATION INTELLIGENCE TOOLS (NEW) ---
         "location_intelligence_header": "📍 Location & Market Intelligence",
         "tool_location_quality_button": "Location Quality Score", "tool_location_quality_title": "Location Quality Score Analyzer", "tool_location_quality_info": "Calculates a quality score for your target location based on your preferences for connectivity, amenities, and your concerns about pollution and crime.",
         "your_location_score_label": "Your Location's Quality Score", "score_breakdown_header": "Score Breakdown", "factor_label": "Factor", "your_preference_label": "Your Preference", "score_impact_label": "Score Impact",
         "tool_compare_localities_button": "Compare Nearby Options", "tool_compare_localities_title": "Comparative Locality Analysis", "tool_compare_localities_info": "Discover alternative localities in the same city that might offer better value or a better location score for your budget.",
         "your_target_locality_label": "Your Target Locality", "for_your_budget_label": "For your budget of", "you_can_get_label": "you can get approx.", "sq_ft_label": "sq. ft.",
         "alternative_localities_header": "Alternative Localities in {city}", "locality_label": "Locality", "avg_price_psf_label": "Avg. Price (psf)", "location_score_label": "Location Score", "property_size_for_budget_label": "Area for your Budget", "vibe_label": "Vibe / Character",
-
-        # --- NEW FEATURES (Flood, Vendor, Loan) ---
         "tool_env_risk_button": "Environmental Risk", "tool_env_risk_title": "Flood & Eco-Zone Risk Analysis", "tool_env_risk_info": "Assesses potential flood and ecological sensitivity risks for your chosen locality. *Note: This is a simulation based on general data and not a legal certification.*",
         "risk_assessment_for_label": "Risk Assessment For:", "flood_risk_label": "Flood Zone Risk", "eco_risk_label": "Ecological Sensitivity",
         "risk_level_low": "Low", "risk_level_medium": "Medium", "risk_level_high": "High",
@@ -148,24 +100,21 @@ TRANSLATIONS = {
         "tool_loan_guide_button": "Loan & Subsidy Guide", "tool_loan_guide_title": "Loan & Subsidy Eligibility Guide", "tool_loan_guide_info": "Get information on home loans, potential government subsidies like PMAY, and tax benefits.",
         "loan_tips_header": "Home Loan Tips", "pmay_guide_header": "PMAY Subsidy Guide", "tax_benefits_header": "Tax Saving Tips", "pmay_eligibility_header": "Your PMAY Eligibility (Simulation)",
     },
-    'hi': { # Hindi Translations
+    'hi': {
         "language_name": "Hindi (हिन्दी)", "app_title": "एआई रियल एस्टेट सलाहकार",
     },
-    'mr': { # Marathi Translations
+    'mr': {
         "language_name": "Marathi (मराठी)", "app_title": "एआय रिअल इस्टेट सल्लागार",
     }
 }
-# Add fallbacks for other languages to English
 for lang in ['hi', 'mr']:
     for key, value in TRANSLATIONS['en'].items():
         if key not in TRANSLATIONS[lang]:
             TRANSLATIONS[lang][key] = value
 
 def t(key):
-    """Translation helper function."""
     return TRANSLATIONS[st.session_state.language].get(key, key)
 
-# --- Constants ---
 CSV_COLUMNS = [
     'project_name','name','contact','dob','income','intent_type','intent_purpose','loc_city','loc_locality',
     'loc_pincode','fin_budget','fin_loan','fin_subsidy','mixed_components','plan_flat_size','plan_plot_area',
@@ -175,10 +124,6 @@ CSV_COLUMNS = [
     'is_joint_investment', 'co_owner_name', 'co_owner_relationship', 'investment_share_p1', 'investment_share_p2',
     'fsi_value'
 ]
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Core & Mock Data Functions
-# ─────────────────────────────────────────────────────────────────────────────
 
 @st.cache_data(ttl=600)
 def ask_gemini(prompt: str, temperature: float = 0.4) -> str:
@@ -267,8 +212,6 @@ def get_price_data(city_name: str) -> pd.DataFrame:
         })
     return pd.DataFrame(data)
 
-# --- MOCK DATA FUNCTIONS (Including NEW & UPDATED) ---
-
 @st.cache_data
 def get_mock_build_vs_buy_data(loc_city, plan_plot_area, plan_built_up):
     city_hash = hash(loc_city.lower())
@@ -303,13 +246,12 @@ def get_mock_hyperlocal_price_data(loc_city, loc_locality):
     ]
     return pd.DataFrame([{"Location": d["Location"], "Modifier": d["Modifier"]} for d in data])
 
-
 @st.cache_data
 def get_mock_resale_projection_data(loc_city, loc_locality, property_size_sqft):
     locality_hash = hash(loc_city.lower() + (loc_locality or '').lower())
     np.random.seed(locality_hash % (2**32 - 1))
     current_price_psf = 6000 + (locality_hash % 3000)
-    annual_growth_rate = np.random.uniform(0.04, 0.08) # 4% to 8% annual growth
+    annual_growth_rate = np.random.uniform(0.04, 0.08)
     projections = {"Year": [], "Projected Price per sq.ft (₹)": [], "Projected Total Value (₹)": []}
     for i in range(0, 11, 2):
         projected_psf = current_price_psf * ((1 + annual_growth_rate) ** i)
@@ -377,9 +319,9 @@ def get_mock_green_savings_data(cost_df):
 
 def calculate_location_quality_score(amenities, connectivity, pollution, crime):
     score_mapping = { 'Low': 1, 'Medium': 2, 'High': 3, 'Not Important': 1, 'Somewhat': 2, 'Very Important': 3 }
-    amenities_score = score_mapping.get(amenities, 1) * 1.2 # Slightly more weight
+    amenities_score = score_mapping.get(amenities, 1) * 1.2
     connectivity_score = score_mapping.get(connectivity, 1) * 1.2
-    pollution_score = (4 - score_mapping.get(pollution, 3)) # Inverted
+    pollution_score = (4 - score_mapping.get(pollution, 3))
     crime_score = (4 - score_mapping.get(crime, 3))
     total_score = amenities_score + connectivity_score + pollution_score + crime_score
     max_score = (3 * 1.2) + (3 * 1.2) + 3 + 3
@@ -422,8 +364,6 @@ def get_mock_comparative_localities_data(city, budget):
             t("vibe_label"): loc["vibe"]
         })
     return pd.DataFrame(results)
-
-# --- NEW MOCK DATA & CONTENT FUNCTIONS ---
 
 @st.cache_data
 def get_mock_environmental_risk_data(city, locality):
@@ -477,10 +417,6 @@ def get_loan_subsidy_info(income):
     info['tips'] = "*   **Credit Score:** A score above 750 is ideal for the best interest rates. Check your score before applying.\n*   **Compare Lenders:** Don't just go with your salary account bank. Compare rates, processing fees, and prepayment charges across multiple banks and NBFCs.\n*   **Required Documents:** You will typically need Identity/Address Proof (PAN, Aadhaar), Income Proof (Salary Slips, Form 16, ITR), and Property Documents (Sale Agreement, Title Deed)."
     return info
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# UI Rendering Functions
-# ─────────────────────────────────────────────────────────────────────────────
 def render_flat_specifics():
     st.markdown(f"##### {t('flat_details_header')}")
     st.selectbox(t('flat_size_label'), ['1BHK', '2BHK', '3BHK', '4BHK+', 'Penthouse', 'Studio', 'Custom'], key='plan_flat_size')
@@ -528,7 +464,6 @@ def render_mixed_investment_specifics():
             st.selectbox(t('co_owner_relationship_label'), options=rel_options_display, key='co_owner_relationship'); st.slider(t('investment_share_p2_label'), 0.0, 100.0, key='investment_share_p2', on_change=sync_investment_shares, args=('p2',))
     st.divider()
 
-# --- Advanced Tool Renderers ---
 def render_build_vs_buy_tool():
     st.subheader(f"🆚 {t('tool_build_vs_buy_title')}"); st.info(t('tool_build_vs_buy_info'))
     data = get_mock_build_vs_buy_data(st.session_state.get('loc_city'), st.session_state.get('plan_plot_area'), st.session_state.get('plan_built_up'))
@@ -606,7 +541,7 @@ def render_payback_calculator_tool():
 def render_green_cost_estimator_tool():
     st.subheader(f"🌱 {t('tool_green_cost_estimator_title')}"); st.info(t('tool_green_cost_estimator_info'))
     with st.container(border=True):
-        built_up_area = st.session_state.get('plan_built_up', 1800.0); cost_df = get_mock_green_cost_data(st.session_state.get('loc_city'), built_up_area)
+        built_up_area = st.session_state.get('plan_built_up', 1800.0); cost_df = get_mock_green_cost_data(st.session_state.get('loc_city'), st.session_state.get('plan_built_up', 1800.0))
         st.dataframe(cost_df, use_container_width=True, hide_index=True, column_config={ t("estimated_cost_label"): st.column_config.NumberColumn(format="₹%,.0f") })
 
 def render_green_savings_predictor_tool():
@@ -639,8 +574,6 @@ def render_compare_localities_tool():
             t("location_score_label"): st.column_config.ProgressColumn(format="%d/100", min_value=0, max_value=100),
             t("property_size_for_budget_label"): st.column_config.NumberColumn(format="%,.0f sq.ft.")
         })
-
-# --- NEW TOOL RENDERERS ---
 
 def render_environmental_risk_tool():
     st.subheader(f"🏞️ {t('tool_env_risk_title')}"); st.info(t('tool_env_risk_info'))
@@ -688,10 +621,6 @@ def render_loan_guide_tool():
     with st.expander(f"**{t('tax_benefits_header')}**"): st.markdown(info['tax'])
     with st.expander(f"**{t('loan_tips_header')}**"): st.markdown(info['tips'])
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Main UI Display Functions
-# ─────────────────────────────────────────────────────────────────────────────
 def display_sidebar():
     with st.sidebar:
         language_map = {lang_code: details['language_name'] for lang_code, details in TRANSLATIONS.items()}
@@ -814,7 +743,6 @@ def display_step3_details():
             st.session_state.step = 2
             st.rerun()
 
-
 def display_step4_analysis():
     st.subheader(t('step4_header')); st.success(t('project_saved_success'))
     project_details = {key: st.session_state.get(key) for key in CSV_COLUMNS if st.session_state.get(key) not in [None, '']}
@@ -901,9 +829,6 @@ def calculate_age(born):
     if not isinstance(born, date): return "N/A"
     today = date.today(); return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
-# ─────────────────────────────────────────────────────────────────────────────
-# AI Prompt Engineering Functions
-# ─────────────────────────────────────────────────────────────────────────────
 def build_initial_prompt(details, lang_code):
     language_name = TRANSLATIONS[lang_code]['language_name']
     client_profile = f"**CLIENT'S BASE PROFILE:**\n- Name: {details.get('name', 'User')}\n- Age: {calculate_age(st.session_state.get('dob'))} years\n- Annual Income: ₹{int(details.get('income', 0)):,}\n- Primary Goal: {t(details.get('intent_type', 'N/A'))}\n- Main Purpose: {t(details.get('intent_purpose', 'N/A'))}\n- Target City: {details.get('loc_city', 'N/A')}\n- Total Budget: ₹{int(details.get('fin_budget', 0)):,}\n- Needs Loan: {'Yes' if details.get('fin_loan') else 'No'}\n"
@@ -932,9 +857,6 @@ def build_follow_up_prompt(details, initial_report, question, lang_code):
         **YOUR TASK:**\nAnswer the question concisely in {language_name}. Base your answer on the report's data. If it requires a new calculation (e.g., "what if interest is 9%?"), perform it and show the result. Do not repeat large parts of the report.
     """)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Main App Controller
-# ─────────────────────────────────────────────────────────────────────────────
 def main():
     st.set_page_config(page_title="AI Real Estate Advisor", page_icon="🏠", layout="wide")
     defaults = {
