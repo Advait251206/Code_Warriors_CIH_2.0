@@ -1,0 +1,132 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script, but they contain paths and other sensitive info
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nosexy
+.noseids
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.run/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+#   For a list of which Python versions you have installed:
+#   pyenv versions
+# For a project-specific Python version:
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if delegates have different OS, lock file might cause issue.
+# Pipfile.lock
+
+# poetry
+#   Similar to Pipfile.lock, poetry.lock is of high value.
+# poetry.lock
+
+# pdm
+#   Similar to Pipfile.lock, pdm.lock is of high value.
+# pdm.lock
+
+# virtualenv
+venv/
+active_env/
+ENV/
+env/
+.env
+.venv
+env.bak/
+venv.bak/
+
+# Streamlit config and secrets
+.streamlit/config.toml
+.streamlit/secrets.toml
+
+# Local project saved files (avoid committing local user directories)
+projects/
+
+# OS/System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Antigravity/Agent planning artifacts
+.agent/
+.planning/
+.gemini/

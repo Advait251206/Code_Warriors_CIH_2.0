@@ -16,17 +16,33 @@ except ImportError:
     st.error("Gemini API library not found. Please run 'pip install google-generativeai' in your environment.")
     st.stop()
 
-GEMINI_API_KEYS = [
-    "AIzaSyAejvlhIRTaB3-36e-1kXkSn-EaoQasIlA", "AIzaSyDNHN7T5apK6VckmgQJ3AY_5oCgXkwtyuc",
-]
-valid_api_keys = [key for key in GEMINI_API_KEYS if "YOUR_API_KEY" not in key]
+# Try loading API Key securely from environment
+env_key = os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
 
-if not valid_api_keys:
-    st.error("🔐 No valid Gemini API Keys found. Please add your keys to the GEMINI_API_KEYS list in the code.")
+# Fallback: Read from local .env file if it exists
+if not env_key and os.path.exists(".env"):
+    try:
+        with open(".env", "r") as f:
+            for line in f:
+                if line.strip().startswith("GOOGLE_API_KEY="):
+                    env_key = line.strip().split("=", 1)[1].strip().strip('"').strip("'")
+                elif line.strip().startswith("GEMINI_API_KEY="):
+                    env_key = line.strip().split("=", 1)[1].strip().strip('"').strip("'")
+    except Exception:
+        pass
+
+# Fallback: Check sidebar custom session input
+if not env_key:
+    st.sidebar.markdown("### 🔑 API Configuration")
+    user_key = st.sidebar.text_input("Enter Gemini API Key", type="password", help="Get a free key from Google AI Studio")
+    if user_key:
+        env_key = user_key
+
+if not env_key:
+    st.error("🔐 **Gemini API Key Required.** Please configure your `GOOGLE_API_KEY` in environment variables, add a `.env` file, or enter it in the sidebar to begin.")
     st.stop()
 
-selected_key = random.choice(valid_api_keys)
-genai.configure(api_key=selected_key)
+genai.configure(api_key=env_key)
 MODEL = genai.GenerativeModel("gemini-1.5-flash")
 
 TRANSLATIONS = {
